@@ -1,0 +1,29 @@
+{
+  "pages": {
+    "autoSsl": true,
+    "cache": {
+      "htmlCache": false,
+      "assetCacheTTL": 86400
+    }
+  },
+  "security": {
+    "ddosProtection": {
+      "enable": true,
+      "rateLimit": {
+        "requestsPerMinute": 600,
+        "burst": 100
+      }
+    },
+    "waf": {
+      "enabled": true,
+      "rules": [
+        { "id": "block-sql-injection", "action": "block", "condition": "contains_any(query, ['select ', 'union ', ' or 1=1', 'drop '])" },
+        { "id": "block-xss", "action": "block", "condition": "contains_any(query, ['<script', 'onerror=', 'onload='])" },
+        { "id": "block-admin-panel", "action": "challenge", "condition": "path_starts_with('/admin')" },
+        { "id": "rate-limit-api", "action": "rate_limit", "condition": "path_starts_with('/api/')", "limit": { "rpm": 300, "burst": 60 } }
+      ]
+    },
+    "tls": { "minVersion": "TLSv1.2", "strict": true },
+    "hsts": { "enabled": true, "maxAge": 31536000, "includeSubDomains": true }
+  }
+}

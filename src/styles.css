@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  body {
+    @apply bg-dark-900 text-white font-sans;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100vh;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-glow;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary-500 hover:bg-secondary-600 text-dark-900 font-medium py-2 px-4 rounded-lg transition-all duration-200 shadow-lg hover:shadow-glow-gold;
+  }
+  
+  .btn-outline {
+    @apply border border-primary-500 text-primary-400 hover:bg-primary-500 hover:text-white font-medium py-2 px-4 rounded-lg transition-all duration-200;
+  }
+  
+  .card {
+    @apply bg-dark-800 border border-dark-700 rounded-xl p-6 shadow-xl backdrop-blur-sm;
+  }
+  
+  .card-hover {
+    @apply card hover:border-primary-500 hover:shadow-glow transition-all duration-300 cursor-pointer;
+  }
+  
+  .input-field {
+    @apply bg-dark-800 border border-dark-600 text-white placeholder-dark-400 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-400 to-accent-400 bg-clip-text text-transparent;
+  }
+  
+  .glass-effect {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+  
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  
+  /* 页面布局 */
+  .page-container {
+    @apply pt-16 min-h-screen;
+  }
+  
+  .page-content {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+  }
+}
+
+@layer utilities {
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes glow {
+    0% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.5); }
+    100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.8); }
+  }
+}
+
+/* 保留原有样式以兼容现有页面 */
+:root{--bg:#0b1324;--panel:#141b2d;--border:#24314a;--primary:#29b6f6;--muted:#94a3b8;--success:#22c55e;--danger:#ef4444;}
+.container{max-width:1100px;margin:0 auto;padding:20px}
+.nav{position:sticky;top:0;background:rgba(20,27,45,.8);backdrop-filter:saturate(160%) blur(6px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1100px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:12px}
+.brand{font-weight:600;color:#fff}
+.link{color:#e5e7eb;text-decoration:none;margin-left:12px}
+.link:hover{text-decoration:underline}
+.card-hd{padding:14px 16px;border-bottom:1px solid var(--border);font-weight:600}
+.card-bd{padding:16px}
+.btn{padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:#1f2937;color:#e5e7eb;cursor:pointer}
+.btn.primary{background:var(--primary);color:#102a43;border-color:#1b9edb}
+.btn.success{background:var(--success);color:#07210f;border-color:#16a34a}
+.btn.danger{background:var(--danger);color:#2b0a0a;border-color:#dc2626}
+.input,.select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:#0e1628;color:#e5e7eb}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+.col-12{grid-column:span 12}
+.col-6{grid-column:span 6}
+.col-4{grid-column:span 4}
+.col-8{grid-column:span 8}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{padding:10px;border-bottom:1px solid var(--border)}
+.badge{padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:#0e1628;color:#e5e7eb}
+.badge.open{background:#0e3a2e}
+.badge.claimed{background:#3b2f0e}
+.badge.assigned{background:#162b3b}
+.badge.completed{background:#1f3b16}
+@media(max-width:768px){.grid{grid-template-columns:repeat(1,1fr)}.col-6,.col-4,.col-8{grid-column:span 1}}
