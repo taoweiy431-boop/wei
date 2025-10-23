@@ -1,62 +1,149 @@
-# 部署与配置指南
+# 三角洲俱乐部抢单系统 - 部署指南
 
-本项目使用 Supabase 作为后端（Auth/DB/存储）并通过 EdgeOne Pages 发布，支持全球加速与WAF/DDoS防护。
+## 项目状态
+✅ 项目已成功构建  
+✅ 生产版本已生成 (dist目录)  
+✅ Vercel配置文件已准备就绪  
 
-## 1. 初始化 Supabase 项目
+## 部署方式
 
-1. 在 Supabase 控制台创建新项目，记录 `Project URL` 与 `Anon Key`。
-2. 打开 SQL Editor，执行 `supabase/schema.sql` 中的全部脚本：
-   - 创建 `profiles / tasks / claims / transactions / audit_logs`
-   - 启用 RLS 与策略
-   - 创建 RPC：`claim_task` 与 `complete_task`
-   - 创建触发器与信誉计算函数
-3. （可选）在 `Storage` 中创建 `proofs` bucket，如需私有访问保持非公开。
+### 方式一：手动部署到Vercel (推荐)
 
-## 2. 配置前端环境变量
+1. **访问 Vercel 官网**
+   - 打开 https://vercel.com
+   - 使用GitHub账号登录
 
-复制 `.env.example` 为 `.env` 并填入：
+2. **创建新项目**
+   - 点击 "New Project"
+   - 选择 "Import Git Repository"
 
+3. **上传项目文件**
+   - 将 `C:\temp\delta-club-deploy` 目录中的所有文件上传到GitHub仓库
+   - 或者直接拖拽文件到Vercel界面
+
+4. **配置环境变量**
+   在Vercel项目设置中添加以下环境变量：
+   ```
+   VITE_SUPABASE_URL=你的Supabase项目URL
+   VITE_SUPABASE_ANON_KEY=你的Supabase匿名密钥
+   ```
+
+5. **部署设置**
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+   - Install Command: `npm install`
+
+### 方式二：使用Netlify部署
+
+1. **访问 Netlify**
+   - 打开 https://netlify.com
+   - 登录账号
+
+2. **拖拽部署**
+   - 将 `C:\temp\delta-club-deploy\dist` 目录直接拖拽到Netlify部署区域
+   - 或者连接GitHub仓库进行自动部署
+
+3. **配置环境变量**
+   在Netlify项目设置中添加环境变量（同上）
+
+### 方式三：使用GitHub Pages
+
+1. **推送到GitHub**
+   ```bash
+   cd C:\temp\delta-club-deploy
+   git remote add origin https://github.com/你的用户名/delta-club-supabase.git
+   git push -u origin main
+   ```
+
+2. **启用GitHub Pages**
+   - 在GitHub仓库设置中启用Pages
+   - 选择从Actions部署
+
+3. **创建GitHub Actions工作流**
+   创建 `.github/workflows/deploy.yml`:
+   ```yaml
+   name: Deploy to GitHub Pages
+   on:
+     push:
+       branches: [ main ]
+   jobs:
+     build-and-deploy:
+       runs-on: ubuntu-latest
+       steps:
+         - uses: actions/checkout@v2
+         - uses: actions/setup-node@v2
+           with:
+             node-version: '18'
+         - run: npm install
+         - run: npm run build
+           env:
+             VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+             VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+         - uses: peaceiris/actions-gh-pages@v3
+           with:
+             github_token: ${{ secrets.GITHUB_TOKEN }}
+             publish_dir: ./dist
+   ```
+
+## 重要文件说明
+
+### 已准备的配置文件
+- `vercel.json` - Vercel部署配置
+- `.vercelignore` - 忽略不必要的文件
+- `.gitignore` - Git忽略文件配置
+- `package.json` - 项目依赖和构建脚本
+
+### 构建输出
+- `dist/` 目录包含生产就绪的静态文件
+- 总大小约 25.64 kB (CSS) + 606.88 kB (JS)
+- 已优化并压缩
+
+## 环境变量配置
+
+部署时需要配置以下环境变量：
+
+```env
+VITE_SUPABASE_URL=https://你的项目ID.supabase.co
+VITE_SUPABASE_ANON_KEY=你的匿名密钥
 ```
-VITE_SUPABASE_URL=你的SupabaseURL
-VITE_SUPABASE_ANON_KEY=你的AnonKey
-```
 
-## 3. 本地运行与构建
+## 部署后验证
 
-```
-# 在项目根目录
-cd delta-club-supabase
-npm i
-npm run dev
-npm run build
-```
+1. **功能测试**
+   - 访问部署的URL
+   - 测试用户注册/登录
+   - 验证抢单大厅功能
+   - 检查任务管理功能
 
-构建产物位于 `delta-club-supabase/dist/`。
+2. **性能检查**
+   - 页面加载速度
+   - 响应式设计
+   - 移动端兼容性
 
-## 4. EdgeOne 发布与安全
+## 故障排除
 
-- 通过 EdgeOne Pages 创建站点并指向 `dist/` 构建目录。
-- 参考 `edgeone.config.json` 开启：
-  - DDoS 防护与速率限制
-  - WAF 常见规则（SQLi/XSS/后台路径挑战）
-  - TLS1.2+ 与 HSTS
+### 常见问题
+1. **环境变量未生效**
+   - 确保变量名以 `VITE_` 开头
+   - 重新部署项目
 
-## 5. 监控与备份
+2. **Supabase连接失败**
+   - 检查URL和密钥是否正确
+   - 验证Supabase项目状态
 
-- 使用 Supabase Project Settings 中的日志与审计 (Audit Logs)
-- 定期开启数据库自动备份与漏洞扫描（可集成 GitHub Actions 定期运行安全扫描）
+3. **路由404错误**
+   - 确保配置了SPA重定向规则
+   - 检查 `vercel.json` 中的路由配置
 
-## 6. 权限与RLS确认清单
+## 联系支持
 
-- 未登录用户：不可访问任何数据
-- 登录用户（worker）：
-  - 可查看 `open` 任务与自身相关任务
-  - 可通过 RPC 抢单与结算任务
-- 登录用户（csr/admin）：
-  - 可创建任务与查看全部任务
+如果遇到部署问题，请检查：
+1. 构建日志中的错误信息
+2. 浏览器控制台的错误
+3. 网络请求是否正常
 
-## 7. 抢单公平性说明
+---
 
-- 抢单通过 `UPDATE ... WHERE status='open'` 的原子操作实现，事务内只允许首个成功更新者获胜；
-- RPC 中加入每秒最多 3 次的限速；
-- 所有动作写入 `audit_logs`，可用于风控与反作弊分析。
+**部署准备完成！** 🚀
+
+项目已成功构建并准备部署。推荐使用Vercel进行部署，配置简单且性能优秀。
